@@ -1,6 +1,6 @@
 //Backbone Model
 
-var Blog = Backbone.Model.extend({
+var Item = Backbone.Model.extend({
     validate: function(attrs){
         var phoneRegex = /^([0][0-9][0-9](\s|)[0-9][0-9][0-9](\s|)[0-9][0-9](\s|)[0-9][0-9])$|^(([0][0]|\+)[4][1](\s|)[0-9][0-9](\s|)[0-9][0-9][0-9](\s|)[0-9][0-9](\s|)[0-9][0-9])$/g;
         if(!attrs.phonenumber.match(phoneRegex)){
@@ -20,21 +20,21 @@ defaults: {
 
 });
 
-var Blogs = Backbone.Collection.extend({
-    model: Blog
+var Items = Backbone.Collection.extend({
+    model: Item
 });
 
 
 
-var blogs = new Blogs();
+var items = new Items();
 
 
 ////backbone view for one Item
-var BlogViews = Backbone.View.extend({
-    model: new Blog(),
+var ItemViews = Backbone.View.extend({
+    model: new Item(),
     
     initialize: function(){
-        this.template = _.template($(".blogs-list-template").html());
+        this.template = _.template($(".items-list-template").html());
         
     },
     render: function(){
@@ -48,17 +48,17 @@ var BlogViews = Backbone.View.extend({
 
 
 ///backbone view for all items
-var BlogsViews = Backbone.View.extend({
-    model: blogs,
-    el: $(".blogs-list"),
+var ItemsViews = Backbone.View.extend({
+    model: items,
+    el: $(".items-list"),
     initialize: function(){
         this.model.on("add", this.render, this);
     },
     render: function(){
         var self = this;
         this.$el.html("");
-        _.each(this.model.toArray(), function(blog){
-        self.$el.append((new BlogViews({model: blog})).render().$el);
+        _.each(this.model.toArray(), function(item){
+        self.$el.append((new ItemViews({model: item})).render().$el);
         });
         return this;
     },
@@ -67,28 +67,28 @@ var BlogsViews = Backbone.View.extend({
     $(document).ready(function(){
        $(".form-row").on("submit", function(event){
            event.preventDefault();
-         if(blogs.length ==10){
+         if(items.length ==10){
             $(".p").append("Cant insert more then 10 Data");
             }else{
 
 
        
-        var blog = new Blog({
+        var item = new Item({
             name: $(".name-input").val(),
             address: $(".address-input").val(),
             phonenumber: $(".phonenumber-input").val(),}, {validate: true});
-            blogs.add(blog);
+            items.add(item);
     }
 
        });
-        var blogs =new Blogs([
-            new Blog ({ name: "Smith ", address:"Route de Blanche ", phonenumber: "0041 76 54 23 54", }),
-            new Blog ({name: "Jack ", address:"Chemin des Blanchard ", phonenumber: "0041 76 23 64 45"}),
+        var items =new Items([
+            new Item ({ name: "Smith ", address:"Route de Blanche ", phonenumber: "0765403554", }),
+            new Item ({name: "Jack ", address:"Chemin des Blanchard ", phonenumber: "0762364745"}),
             ]);
         
-        var blogsView = new BlogsViews({model: blogs});
+        var itemsView = new ItemsViews({model: items});
 
-        $("blogs-list").append(blogsView.render().$el)
+        $("items-list").append(itemsView.render().$el)
 
       
 });
